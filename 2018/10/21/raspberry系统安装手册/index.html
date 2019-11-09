@@ -1,34 +1,51 @@
-extends partial/nlayout
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Chengwei Xu(香菜蛋挞), rwayxu@hotmail.com"><title>raspberry系统安装手册 · 宕机30分</title><meta name="description" content="本手册不需要显示器及键盘连树莓派操作, 使用windows系统来为tf卡安装系统, mac和linux我这里没用过, 这些写在上面, 下面不说这些了
+事先准备硬件: 
 
-include mixins
+树莓派 x1
+tf卡 x1 (这边我就叫tf卡了, 不要纠结就是sd卡)
+读卡器 x1
+正常可用的PC x1
 
-block site_title
-    != page.title + " · " + config.title
+软件/镜像: 
 
-block description
-    - var desc = page.desc || strip_html(page.content).replace(/^\s*/, '').replace(/\s*$/, '').substring(0, 150);
-    meta(name="description", content=desc)
-
-block content
-  .autopagerize_page_element: .content: .post-page
-    include mixins
-    +make_post(page, true)
-    //- .share
-    //-   .evernote
-    //-     a.fa.fa-bookmark(href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&title='+encodeURIComponent(document.title);}})();", ref="nofollow", target="_blank")
-    //-   .weibo
-    //-     a.fa.fa-weibo(href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&title=',e(d.title),'&appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));")
-    //-   .twitter
-    //-     a.fa.fa-twitter(href=url_for("http://twitter.com/home?status="+","+config.url+"/"+page.path+","+config.title+","+page.title+",;"))
-    - var prev = page.prev ? page.prev.path : false;
-    - var next = page.next ? page.next.path : false;
-    .pagination
-      ul.clearfix
-        if prev
-          li.pre.pagbuttons
-            a.btn(role="navigation",href=url_for(prev), title=page.prev.title)!= __('prev_post')
-        if next
-          li.next.pagbuttons
-            a.btn(role="navigation",href=url_for(next), title=page.next.title)!= __('next_post')
-    if page.comments
-        include partial/comments
+"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/avatar.jpg" type="image/x-icon"><link rel="stylesheet" href="/css/nstyle.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"></head><body><div class="sidebar animated"><div class="logo-title"><div class="title"><a></a><h3 title><a href="/">宕机30分</a></h3><div class="description"><p>shutdown 30min</p></div></div></div><ul class="social-links"></ul><div class="footer"><div class="by_farbox"><a>香菜蛋挞法力无边</a></div></div></div><div class="main"><div class="page-top animated"><div class="nav"><li><a href="/">主站</a></li><li><a href="/about">简介</a></li><li><a href="/archives">全部</a></li><li><a href="/links">小伙伴</a></li><li><a href="/categories">分类</a></li><li><a href="/tags">标签</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/avatar.jpg"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>raspberry系统安装手册</a></h3></div><div class="post-content"><p>本手册不需要显示器及键盘连树莓派操作, 使用windows系统来为tf卡安装系统, mac和linux我这里没用过, 这些写在上面, 下面不说这些了</p>
+<h3 id="事先准备"><a href="#事先准备" class="headerlink" title="事先准备"></a>事先准备</h3><p>硬件: </p>
+<ul>
+<li>树莓派 x1</li>
+<li>tf卡 x1 (这边我就叫tf卡了, 不要纠结就是sd卡)</li>
+<li>读卡器 x1</li>
+<li>正常可用的PC x1</li>
+</ul>
+<p>软件/镜像: </p>
+<ul>
+<li><a href="https://www.raspberrypi.org/downloads/" target="_blank" rel="noopener">树莓派官方系统下载</a> 这里面两种我选择的 <code>RASPBIAN</code> 点进去我选择的是 <code>Raspbian Stretch with desktop</code> 这里注意下载不了种子你就多试几次, 或者用梯子</li>
+<li><a href="https://www.sdcard.org/chs/index.html" target="_blank" rel="noopener">SD Memory Card formatter</a> 进去点下载再点 <code>... for Windows Download</code> 拖到最底下点 <code>Accept</code> (注意: 这个东西不一定会用上新TF卡可以直接用windows直接操作格式化就好了)</li>
+<li><a href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="noopener">Win32DiskImager</a> 这个直接点进去下载装上</li>
+<li><a href="https://www.putty.org/" target="_blank" rel="noopener">PuTTY</a>, <a href="http://www.advanced-ip-scanner.com/" target="_blank" rel="noopener">advanced-ip-scanner</a> 这两个自己点进去下载安装, 这两个不用也无所谓</li>
+</ul>
+<h3 id="安装系统"><a href="#安装系统" class="headerlink" title="安装系统"></a>安装系统</h3><p>我这边只讲重点, 其他的问题网上都有</p>
+<ol>
+<li><p>把tf卡插上格式化, 注意只能是 <code>FAT16</code> 和 <code>FAT32</code> 这边给出<a href="https://www.raspberrypi.org/documentation/installation/sd-cards.md" target="_blank" rel="noopener">官网解释</a>, 不理解的继续看接下来的解决办法, 用 <code>Win32DiskImager</code> 把镜像的 <code>.img</code> 往里写入, 别选错盘, 注意: 如果有任何其他关于格式化等等的报错全部点取消退出, 只要是提示了写入成功那就行, 一律点取消退出, 如果弹出来句柄错误啥的, 卡住不动啥的, 看下面的解决办法</p>
+</li>
+<li><p>写入完成在tf卡的根目录下添加一个没有后缀的文件 <code>SSH</code> 这个就空文件, 电脑上不显示后缀的, 请把后缀调出来, 另外添加一个文件 <code>wpa_supplicant.conf</code> 里面的内容就下面的, <code>ssid, psk, key_mgmt</code> 自己改下自己的无线名称, 密码和加密方式</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev</span><br><span class="line">update_config=1</span><br><span class="line">country=CN</span><br><span class="line">    </span><br><span class="line">network=&#123;</span><br><span class="line">    ssid=<span class="string">"WiFi-A"</span></span><br><span class="line">    psk=<span class="string">"12345678"</span></span><br><span class="line">    key_mgmt=WPA-PSK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>好了这就ok了, tf卡插树莓派连上电源直接启动</li>
+<li>等待, 多等等</li>
+<li>查下你无线网络内的ip <code>advanced-ip-scanner</code> 可以查, 找到你的树莓派, 它上面就写的叫 <code>Raspberry Pi</code> 在路由里看就比较不方便了, 你看多出来的就是了 </li>
+<li>用 <code>PuTTY</code> SSH远程 用户名:pi 密码:raspberry, 连上了就OK, 直接终端命令用<code>ssh pi@192.168.xxx.xxx</code></li>
+</ol>
+<h3 id="异常解决办法"><a href="#异常解决办法" class="headerlink" title="异常解决办法"></a>异常解决办法</h3><p>上面的都是正常情况, 肯定不会顺风顺水啊, 这里着重讲我遇到的这个问题:</p>
+<h4 id="tf卡的格式化问题"><a href="#tf卡的格式化问题" class="headerlink" title="tf卡的格式化问题"></a>tf卡的格式化问题</h4><p>之前无法将tf卡格式化为 <code>FAT32</code> 和 <code>FAT16</code> 的看条, 如果你看过官网的解释你的问题应该解决了, 那么这里我给没看懂官网解释的复述一下, 简单来说就是你的tf卡太大了</p>
+<blockquote>
+<p>The standard formatting tools built into Windows are limited, as they only allow partitions up to 32GB to be formatted as FAT32, so to format a 64GB partition as FAT32 you need to use a third-party formatting tool. </p>
+</blockquote>
+<p>这里给出<a href="http://www.ridgecrop.demon.co.uk/guiformat.htm" target="_blank" rel="noopener">官网推荐第三方格式化工具</a>, 用这个工具去格才能顺利将大于32G的tf卡格成 <code>FAT32</code> , 链接不稳定的自己搜 <code>FAT32 Format</code> 或者 <code>guiformat</code></p>
+<h4 id="tf卡无法格式化-写入据句柄报错"><a href="#tf卡无法格式化-写入据句柄报错" class="headerlink" title="tf卡无法格式化, 写入据句柄报错"></a>tf卡无法格式化, 写入据句柄报错</h4><ul>
+<li>先拿出 <code>SD Memory Card formatter</code> 格式化, 不要用 <code>overwrite</code> 太慢了</li>
+<li>然后用管理员打开cmd 用 <code>diskpart</code> 来格式化 输入 <code>diskpart</code> 进入工具后先用 <code>list disk</code> 查下所有的磁盘 <code>select disk 2</code> 这个是根据显示 <code>###</code> 号来的 选几就操作几, 别选错, 然后无脑 <code>clean</code>, <code>create partition primary</code>, <code>active</code>, <code>format fs=fat32 quick</code> 然后一直等, 显示 <code>100 百分比已完成 diskpart成功格式化该卷</code> 这就ok了, 出错就重复之前的所有步骤包括 <code>SD Memory Card formatter</code> </li>
+<li>之后继续写入, 如果还报错, 继续重复以上所有步骤, 直到成功</li>
+</ul>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2018-10-21</span><i class="fa fa-tag"></i><a class="tag" href="/categories/笔记/" title="笔记">笔记 </a><a class="tag" href="/tags/树莓派/" title="树莓派">树莓派 </a></div></div></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2018/10/21/raspberry风扇控制/" title="raspberry风扇控制">上一篇</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2018/09/26/Vue手记/" title="Vue demo 学习">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
